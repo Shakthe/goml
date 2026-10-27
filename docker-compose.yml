@@ -1,0 +1,115 @@
+name: flash-sale
+
+x-server-env: &server-env
+  DATABASE_URL: postgres://flash:flash@postgres:5432/flash
+  REDIS_URL: redis://redis:6379
+  AMQP_URL: amqp://flash:flash@rabbitmq:5672
+  SESSION_SECRET: ${SESSION_SECRET:-dev-only-session-secret}
+  ADMIN_TOKEN: ${ADMIN_TOKEN:-dev-admin-token}
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: flash
+      POSTGRES_PASSWORD: flash
+      POSTGRES_DB: flash
+    command: ["postgres", "-c", "max_connections=200"]
+    volumes:
+      - ./infra/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U flash -d flash"]
+      interval: 2s
+      retries: 30
+
+  redis:
+    image: redis:7.2-alpine
+    # appendonly: the stock counter survives a Redis restart.
+    command: ["redis-server", "--appendonly", "yes", "--appendfsync", "everysec"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      retries: 30
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: flash
+      RABBITMQ_DEFAULT_PASS: flash
+    ports:
+      - "15672:15672"   # management UI, handy for watching the queue
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      retries: 30
+
+  api:
+    build: ./server
+    environment:
+      <<: *server-env
+      DB_POOL_SIZE: 10
+    deploy:
+      replicas: 4
+    restart: unless-stopped
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
+      interval: 3s
+      retries: 20
+
+  worker:
+    build: ./server
+    command: ["node", "dist/worker.js"]
+    environment:
+      <<: *server-env
+      DB_POOL_SIZE: 4
+      WORKER_PREFETCH: 1
+    deploy:
+      replicas: 2
+    restart: unless-stopped
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+
+  gateway:
+    build:
+      context: .
+      dockerfile: infra/nginx/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    ulimits:
+      nofile: { soft: 65535, hard: 65535 }
+    depends_on:
+      api: { condition: service_healthy }
+
+  # ---- test tooling (docker compose --profile test run ...) ----
+  k6:
+    image: grafana/k6:0.54.0
+    profiles: ["test"]
+    volumes:
+      - ./tests/load:/scripts
+      - ./evidence/k6:/results
+    environment:
+      BASE_URL: http://gateway
+      SESSION_SECRET: ${SESSION_SECRET:-dev-only-session-secret}
+      ADMIN_TOKEN: ${ADMIN_TOKEN:-dev-admin-token}
+
+  api-tests:
+    image: maven:3.9-eclipse-temurin-17
+    profiles: ["test"]
+    working_dir: /tests
+    volumes:
+      - ./tests/api:/tests
+      - maven-cache:/root/.m2
+    environment:
+      BASE_URL: http://gateway
+      ADMIN_TOKEN: ${ADMIN_TOKEN:-dev-admin-token}
+    command: ["mvn", "-B", "--no-transfer-progress", "test"]
+
+volumes:
+  maven-cache:
