@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Server typecheck and build
+        working-directory: server
+        run: npm ci && npm run build
+      - name: Web unit tests
+        working-directory: web
+        run: npm ci && npm test
+      - name: Web build with bundle budget
+        working-directory: web
+        run: npm run build
+
+  integration:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start the stack
+        run: docker compose up -d --build --wait
+      - name: REST Assured API tests
+        run: docker compose --profile test run --rm api-tests
+      - name: k6 burst (smaller, for CI runners)
+        run: docker compose --profile test run --rm -e TOTAL=20000 -e VUS=300 k6 run /scripts/flash-sale.js
+      - name: Logs on failure
+        if: failure()
+        run: docker compose logs --tail 200 api worker gateway
