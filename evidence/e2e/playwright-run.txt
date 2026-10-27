@@ -1,0 +1,17 @@
+
+Running 5 tests using 1 worker
+
+  ok 1 [chromium] › storefront.spec.ts:26:5 › before 8 PM: countdown is shown and buying is disabled (2.2s)
+  ok 2 [chromium] › storefront.spec.ts:42:5 › the button unlocks by itself when the sale opens (pushed over SSE) (4.6s)
+  ok 3 [chromium] › storefront.spec.ts:54:5 › rapid clicks send exactly one checkout request and the order is confirmed (2.9s)
+  ok 4 [chromium] › storefront.spec.ts:79:5 › the last unit goes to one buyer; the next buyer sees sold out (2.8s)
+  ok 5 [chromium] › storefront.spec.ts:94:5 › ops page shows Redis, database and queue agreeing (2.8s)
+
+  Slow test file: [chromium] › storefront.spec.ts (15.3s)
+  Consider splitting slow test files to speed up parallel execution
+  5 passed (17.0s)
+
+To open last HTML report run:
+
+  npx playwright show-report ..\..\evidence\e2e\report
+

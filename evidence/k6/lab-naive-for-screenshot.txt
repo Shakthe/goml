@@ -1,0 +1,28 @@
+ Container flash-sale-k6-run-281c81a525e0 Creating 
+ Container flash-sale-k6-run-281c81a525e0 Created 
+time="2026-10-27T16:28:50Z" level=info msg="LAB {\"strategy\":\"naive\",\"stock\":500,\"buyers\":2000,\"confirmedOrders\":2000,\"dbStock\":479}" source=console
+
+     █ teardown
+
+       ✗ never oversells
+        ↳  0% — ✓ 0 / ✗ 1
+
+     checks.........................: 0.00%  0 out of 1
+     data_received..................: 526 kB 99 kB/s
+     data_sent......................: 626 kB 118 kB/s
+     http_req_blocked...............: avg=559.79µs min=1.57µs  med=4.41µs   max=52.7ms   p(90)=119.8µs  p(95)=1.89ms  
+     http_req_connecting............: avg=503.88µs min=0s      med=0s       max=52.65ms  p(90)=73.8µs   p(95)=1.59ms  
+     http_req_duration..............: avg=262.75ms min=3.37ms  med=279.48ms max=668.75ms p(90)=433.48ms p(95)=467.09ms
+       { expected_response:true }...: avg=262.75ms min=3.37ms  med=279.48ms max=668.75ms p(90)=433.48ms p(95)=467.09ms
+     http_req_failed................: 0.00%  0 out of 2003
+     http_req_receiving.............: avg=88.56µs  min=18.07µs med=76.5µs   max=1.47ms   p(90)=124.23µs p(95)=159.97µs
+     http_req_sending...............: avg=139.43µs min=7µs     med=26.78µs  max=10.88ms  p(90)=80.27µs  p(95)=319.16µs
+     http_req_tls_handshaking.......: avg=0s       min=0s      med=0s       max=0s       p(90)=0s       p(95)=0s      
+     http_req_waiting...............: avg=262.52ms min=3.23ms  med=279.13ms max=668.68ms p(90)=433.4ms  p(95)=467.02ms
+     http_reqs......................: 2003   378.517138/s
+     iteration_duration.............: avg=264.14ms min=3.9ms   med=281.31ms max=671.15ms p(90)=435.54ms p(95)=467.35ms
+     iterations.....................: 2000   377.950213/s
+     lab_accepted...................: 2000   377.950213/s
+     vus............................: 0      min=0         max=200
+     vus_max........................: 200    min=200       max=200
+

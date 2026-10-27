@@ -1,0 +1,18 @@
+
+> flash-sale-web@0.0.0 build
+> tsc -b && vite build && node scripts/check-bundle.mjs
+
+vite v6.4.5 building for production...
+transforming...
+✓ 20 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                  0.90 kB │ gzip:  0.53 kB
+dist/assets/index-DyzFaKnw.css   6.03 kB │ gzip:  1.93 kB
+dist/assets/Ops-DwSs6OKm.js      4.58 kB │ gzip:  1.93 kB
+dist/assets/index-BAs5BpWp.js   35.81 kB │ gzip: 14.02 kB
+✓ built in 252ms
+index-BAs5BpWp.js                           35.0 KB    13.7 KB gz
+index-DyzFaKnw.css                           5.9 KB     1.9 KB gz
+Ops-DwSs6OKm.js                              4.5 KB     1.9 KB gz
+total: 45.3 KB raw, 17.5 KB gzipped (budget 200 KB raw)

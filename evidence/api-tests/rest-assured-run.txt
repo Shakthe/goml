@@ -1,0 +1,51 @@
+ Container flash-sale-api-tests-run-8ca3b4101a87 Creating 
+ Container flash-sale-api-tests-run-8ca3b4101a87 Created 
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< sale:flash-sale-api-tests >----------------------
+[INFO] Building flash-sale-api-tests 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.4.0:resources (default-resources) @ flash-sale-api-tests ---
+[INFO] skip non existing resourceDirectory /tests/src/main/resources
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ flash-sale-api-tests ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- resources:3.4.0:testResources (default-testResources) @ flash-sale-api-tests ---
+[INFO] skip non existing resourceDirectory /tests/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ flash-sale-api-tests ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 4 source files with javac [debug release 17] to target/test-classes
+[INFO] 
+[INFO] --- surefire:3.5.2:test (default-test) @ flash-sale-api-tests ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running sale.CheckoutApiTest
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 25.11 s -- in sale.CheckoutApiTest
+[INFO] Running sale.ConcurrencyTest
+[optimistic] 1000 buyers, 50 units -> responses {200=50, 409=950}
+[optimistic] confirmed orders: 50 for 50 units
+[naive] 1000 buyers, 50 units -> responses {200=1000}
+[naive] confirmed orders: 1000 for 50 units
+[queue] 1000 buyers, 50 units -> responses {202=50, 409=950}
+[pessimistic] 1000 buyers, 50 units -> responses {200=50, 409=950}
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 87.49 s -- in sale.ConcurrencyTest
+[INFO] Running sale.GatewayTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.668 s -- in sale.GatewayTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 18, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  01:59 min
+[INFO] Finished at: 2026-10-27T16:08:57Z
+[INFO] ------------------------------------------------------------------------
