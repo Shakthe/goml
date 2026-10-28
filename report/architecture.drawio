@@ -1,0 +1,80 @@
+<mxfile host="drawio" agent="drawio">
+  <diagram id="arch" name="Architecture">
+    <mxGraphModel dx="900" dy="760" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="900" pageHeight="760" math="0" shadow="0" background="#FFFFFF">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Row 1: client and gateway -->
+        <mxCell id="browser" value="&lt;b style=&quot;font-size:20px&quot;&gt;Browser&lt;/b&gt;&lt;br&gt;store page&lt;br&gt;17.5 KB gzipped" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=17;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="20" y="20" width="180" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="nginx" value="&lt;b style=&quot;font-size:20px&quot;&gt;NGINX gateway&lt;/b&gt;&lt;br&gt;static files (cached)&lt;br&gt;rate limit, bot filter&lt;br&gt;load balancing" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=17;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="310" y="20" width="180" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- Row 2: API servers and Redis -->
+        <mxCell id="apis" value="&lt;b style=&quot;font-size:20px&quot;&gt;API servers&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=17;fontColor=#000000;verticalAlign=top;spacingTop=2;" vertex="1" parent="1">
+          <mxGeometry x="310" y="210" width="180" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="api1" value="API 1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontFamily=Times New Roman;fontSize=16;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="322" y="248" width="72" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="api2" value="API 2" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontFamily=Times New Roman;fontSize=16;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="406" y="248" width="72" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="api3" value="API 3" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontFamily=Times New Roman;fontSize=16;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="322" y="290" width="72" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="api4" value="API 4" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontFamily=Times New Roman;fontSize=16;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="406" y="290" width="72" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="redis" value="&lt;b style=&quot;font-size:20px&quot;&gt;Redis&lt;/b&gt;&lt;br&gt;stock counter&lt;br&gt;buyer set&lt;br&gt;idempotency keys&lt;br&gt;order status" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=17;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="600" y="210" width="180" height="125" as="geometry" />
+        </mxCell>
+
+        <!-- Row 3: queue and workers -->
+        <mxCell id="rabbit" value="&lt;b style=&quot;font-size:20px&quot;&gt;RabbitMQ&lt;/b&gt;&lt;br&gt;checkout.orders&lt;br&gt;dead-letter queue" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=17;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="310" y="415" width="180" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="workers" value="&lt;b style=&quot;font-size:20px&quot;&gt;Workers&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=17;fontColor=#000000;verticalAlign=top;spacingTop=2;" vertex="1" parent="1">
+          <mxGeometry x="600" y="415" width="180" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="w1" value="Worker 1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontFamily=Times New Roman;fontSize=16;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="612" y="462" width="72" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="w2" value="Worker 2" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontFamily=Times New Roman;fontSize=16;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="696" y="462" width="72" height="44" as="geometry" />
+        </mxCell>
+
+        <!-- Row 4: database -->
+        <mxCell id="pg" value="&lt;b style=&quot;font-size:20px&quot;&gt;PostgreSQL&lt;/b&gt;&lt;br&gt;source of truth&lt;br&gt;CHECK (stock &amp;gt;= 0)&lt;br&gt;unique constraints" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=17;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="600" y="605" width="180" height="110" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows -->
+        <mxCell id="e1" value="HTTP + SSE" style="edgeStyle=none;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=16;fontColor=#000000;" edge="1" parent="1" source="browser" target="nginx">
+          <mxGeometry relative="1" as="geometry"><mxPoint y="-14" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e2" value="round robin" style="edgeStyle=none;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=16;fontColor=#000000;align=left;" edge="1" parent="1" source="nginx" target="apis">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="8" y="0" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e3" value="(1) reserve" style="edgeStyle=none;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=16;fontColor=#000000;" edge="1" parent="1" source="apis" target="redis">
+          <mxGeometry relative="1" as="geometry"><mxPoint y="-14" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e4" value="(2) publish" style="edgeStyle=none;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=16;fontColor=#000000;align=left;" edge="1" parent="1" source="apis" target="rabbit">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="8" y="0" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e5" value="(3) deliver" style="edgeStyle=none;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=16;fontColor=#000000;" edge="1" parent="1" source="rabbit" target="workers">
+          <mxGeometry relative="1" as="geometry"><mxPoint y="-14" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e6" value="(4) write order" style="edgeStyle=none;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=16;fontColor=#000000;align=right;" edge="1" parent="1" source="workers" target="pg">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="-8" y="0" as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e7" value="(5) mark confirmed" style="edgeStyle=none;rounded=0;html=1;endArrow=block;endFill=1;strokeColor=#000000;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=16;fontColor=#000000;align=right;" edge="1" parent="1" source="workers" target="redis">
+          <mxGeometry relative="1" as="geometry"><mxPoint x="-8" y="0" as="offset" /></mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
