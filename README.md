@@ -16,17 +16,19 @@ The default sale opens at 8:00 PM IST today. To try it right away, go to `/ops`,
 
 All numbers below were measured on one laptop (8 cores, Docker Desktop on Windows) running the whole stack *and* the load generator at the same time. Raw outputs are in [`evidence/`](evidence/).
 
-**The 8 PM test** (k6, [`tests/load/flash-sale.js`](tests/load/flash-sale.js)): 100,000 checkout requests from 1,200 concurrent clients, plus one bot hammering from a single IP.
+**The 8 PM test** (k6, [`tests/load/flash-sale.js`](tests/load/flash-sale.js)): 100,000 checkout requests, each from a different customer and IP, with 100 requests in flight at a time, plus one bot hammering from a single IP.
 
 | | Result |
 |---|---|
-| Checkout requests sent | 100,000 in 8.8 s (about 11,000 per second) |
+| Checkout requests sent | 100,000 in 9.0 s (about 11,000 per second) |
 | Requests answered | 100,000 (100%). No timeouts, no connection errors, no 5xx |
 | Orders confirmed in Postgres | **exactly 500** |
 | Stock left in Redis / Postgres | 0 / 0 |
-| Latency | median 55 ms, p95 191 ms |
-| Load per API replica | 25,005 to 25,007 requests each (4 replicas) |
+| Latency | median 5.7 ms, p95 24.9 ms, p99 47.5 ms, p99.9 87.0 ms (slowest single request 308 ms) |
+| Load per API replica | 25,003 to 25,009 requests each (4 replicas) |
 | Bot requests rate limited | 97.5% (the rest is the allowed burst of 5 plus 2 per second) |
+
+The first version of this test kept 1,200 requests in flight. It pushed the same ~11,000 requests per second through, but requests queued behind each other on the shared CPU, so the median was 55 ms and p95 191 ms. Fewer requests in flight gives the same throughput with far lower latency. Both runs are kept in [`evidence/k6/`](evidence/k6/).
 
 **Oversell Lab** (same burst against four checkout strategies: 5,000 buyers, 500 units, [`evidence/k6/lab-results.md`](evidence/k6/lab-results.md)):
 

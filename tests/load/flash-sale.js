@@ -22,13 +22,16 @@ const botBlocked = new Rate('bot_requests_blocked');
 
 export const options = {
   discardResponseBodies: true,
+  summaryTrendStats: ['avg', 'min', 'med', 'max', 'p(90)', 'p(95)', 'p(99)', 'p(99.9)'],
   scenarios: {
     buyers: {
-      // 100,000 checkout requests fired by 1,200 concurrent clients as fast as the
-      // machine allows. On a laptop that also runs the whole stack this takes ~10-15 s.
+      // 100,000 checkout requests, each from a different customer and client IP, sent as
+      // fast as the machine allows with 100 requests in flight. Throughput is the same as
+      // with 1,200 in flight (the CPU is the limit), but requests no longer queue behind
+      // each other, so latency is far lower. Set VUS to change it.
       executor: 'shared-iterations',
       exec: 'buyer',
-      vus: Number(__ENV.VUS || 1200),
+      vus: Number(__ENV.VUS || 100),
       iterations: TOTAL,
       maxDuration: '90s',
     },
@@ -45,7 +48,7 @@ export const options = {
     checkout_answered: ['rate==1'],
     checkout_server_errors_5xx: ['count==0'],
     checkout_no_response: ['count==0'],
-    'http_req_duration{scenario:buyers}': ['p(95)<1000'],
+    'http_req_duration{scenario:buyers}': ['p(95)<100'],
     bot_requests_blocked: ['rate>0.9'],
     'checks{phase:final}': ['rate==1'],
   },

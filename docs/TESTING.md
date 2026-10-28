@@ -35,15 +35,15 @@ Last run: **18 passed, 0 failed** ([`evidence/api-tests/rest-assured-run.txt`](.
 docker compose --profile test run --rm k6 run --summary-export=/results/flash-sale-summary.json /scripts/flash-sale.js
 ```
 
-- 100,000 checkout requests from 1,200 concurrent virtual users. Each request is a different customer with a different client IP.
+- 100,000 checkout requests with 100 virtual users (requests in flight at a time). Each request is a different customer with a different client IP.
 - At the same time, a bot sends 100 requests per second from one IP for 10 seconds.
-- Thresholds (the run fails if any is missed): every request answered, zero 5xx, zero no-response, buyer p95 < 1 s, more than 90% of bot requests rate-limited. After the queue drains: exactly 500 orders, stock 0 in Postgres and Redis, nothing dead-lettered.
+- Thresholds (the run fails if any is missed): every request answered, zero 5xx, zero no-response, buyer p95 < 100 ms, more than 90% of bot requests rate-limited. After the queue drains: exactly 500 orders, stock 0 in Postgres and Redis, nothing dead-lettered.
 
 Last run ([`evidence/k6/flash-sale-run.txt`](../evidence/k6/flash-sale-run.txt)):
 
 ```
-buyers ✓ [ 100% ] 1200 VUs   0m08.8s   100000/100000 shared iters
-FINAL confirmedOrders=500 dbStock=0 redisStock=0 queue={"consumers":2,"deadLetters":0,"depth":0}
+buyers ✓ [ 100% ] 100 VUs    0m09.0s/1m30s  100000/100000 shared iters
+FINAL confirmedOrders=500 dbStock=0 redisStock=0 queue={"depth":0,"consumers":2,"deadLetters":0}
   ✓ exactly 500 confirmed orders
   ✓ database stock is 0
   ✓ redis stock is 0
@@ -51,11 +51,24 @@ FINAL confirmedOrders=500 dbStock=0 redisStock=0 queue={"consumers":2,"deadLette
 ✓ checkout_answered.........: 100.00% 100000 out of 100000
 ✓ checkout_server_errors_5xx: 0
 ✓ checkout_no_response......: 0
-✓ bot_requests_blocked......: 97.49%
-  http_req_duration.........: med=55.36ms p(90)=144.41ms p(95)=191.06ms max=1.02s
+✓ bot_requests_blocked......: 97.50%
+✓ { scenario:buyers }.......: med=5.7ms p(90)=17.79ms p(95)=24.86ms p(99)=47.54ms p(99.9)=86.98ms max=308.32ms
 ```
 
-A second run, with a browser screenshotting the ops page at the same time, is kept in [`flash-sale-run-while-screenshotting.txt`](../evidence/k6/flash-sale-run-while-screenshotting.txt): 100,000 requests in 14.1 s, same correctness results.
+### Why 100 requests in flight
+
+The first version kept 1,200 requests in flight ([`flash-sale-run-1200vus.txt`](../evidence/k6/flash-sale-run-1200vus.txt)): 100,000 requests in 8.8 s, median 55 ms, p95 191 ms, slowest 1.03 s. The machine can only complete about 11,000 requests per second, so extra requests in flight just wait in line, and latency grows with no gain in throughput. The same burst at different levels:
+
+| Requests in flight | Median | p90 | p95 | Slowest | Summary file |
+|---|---|---|---|---|---|
+| 1,200 | 55.6 ms | 144.9 ms | 191.6 ms | 1,028 ms | `flash-sale-summary-1200vus.json` |
+| 400 | 28.8 ms | 96.5 ms | 139.4 ms | 2,188 ms | `tuning-vus400-summary.json` |
+| 200 | 9.4 ms | 28.2 ms | 36.6 ms | 194 ms | `tuning-vus200-summary.json` |
+| 100 | 5.0 ms | 14.7 ms | 19.2 ms | 112 ms | `tuning-vus100-summary.json` |
+
+Every run had exactly 500 orders, 100% answered and 0 errors. The slowest single request varies a lot between runs (112 ms to 308 ms at 100 in flight) because the load generator and the whole stack share one CPU. Reducing NGINX to 4 worker processes was also tried and made no difference, so it was not kept.
+
+A run with 1,200 in flight while a browser screenshotted the ops page is kept in [`flash-sale-run-while-screenshotting.txt`](../evidence/k6/flash-sale-run-while-screenshotting.txt): 100,000 requests in 14.1 s, same correctness results.
 
 **About the numbers.** Everything ran on one 8-core laptop, with k6 competing for CPU with NGINX, the API replicas and the databases. The first attempt used a fixed arrival rate of 10,000 requests per second. k6 itself could not generate that rate on this machine and reported dropped iterations on its side, while the server still answered every request it received. So the test was changed to send exactly 100,000 requests as fast as possible, which reached about 11,000 per second. Real capacity numbers would need the load generator on separate machines.
 

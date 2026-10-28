@@ -1,0 +1,106 @@
+ Container flash-sale-k6-run-445249bbd2d2 Creating 
+ Container flash-sale-k6-run-445249bbd2d2 Created 
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+     execution: local
+        script: /scripts/flash-sale.js
+        output: -
+
+     scenarios: (100.00%) 2 scenarios, 1220 max VUs, 2m0s max duration (incl. graceful stop):
+              * bot: 100.00 iterations/s for 10s (maxVUs: 20, exec: bot, gracefulStop: 30s)
+              * buyers: 100000 iterations shared among 1200 VUs (maxDuration: 1m30s, exec: buyer, gracefulStop: 30s)
+
+
+Run      [ 100% ] setup()
+bot      [   0% ]
+buyers   [   0% ]
+
+running (0m01.9s), 1206/1220 VUs, 1258 complete and 0 interrupted iterations
+bot      [   4% ] 06/20 VUs  00.4s/10s      100.00 iters/s
+buyers   [   1% ] 1200 VUs   0m00.4s/1m30s  001228/100000 shared iters
+
+running (0m02.9s), 1213/1220 VUs, 9457 complete and 0 interrupted iterations
+bot      [  13% ] 13/20 VUs  01.3s/10s      100.00 iters/s
+buyers   [   9% ] 1200 VUs   0m01.3s/1m30s  009336/100000 shared iters
+
+running (0m03.9s), 1208/1220 VUs, 21736 complete and 0 interrupted iterations
+bot      [  23% ] 08/20 VUs  02.3s/10s      100.00 iters/s
+buyers   [  22% ] 1200 VUs   0m02.3s/1m30s  021512/100000 shared iters
+
+running (0m04.9s), 1212/1220 VUs, 36465 complete and 0 interrupted iterations
+bot      [  33% ] 12/20 VUs  03.3s/10s      100.00 iters/s
+buyers   [  36% ] 1200 VUs   0m03.3s/1m30s  036142/100000 shared iters
+time="2026-10-27T16:29:18Z" level=warning msg="Insufficient VUs, reached 20 active VUs and cannot initialize more" executor=constant-arrival-rate scenario=bot
+
+running (0m05.9s), 1205/1220 VUs, 45660 complete and 0 interrupted iterations
+bot      [  43% ] 05/20 VUs  04.3s/10s      100.00 iters/s
+buyers   [  45% ] 1200 VUs   0m04.3s/1m30s  045233/100000 shared iters
+
+running (0m06.9s), 1205/1220 VUs, 54629 complete and 0 interrupted iterations
+bot      [  53% ] 05/20 VUs  05.3s/10s      100.00 iters/s
+buyers   [  54% ] 1200 VUs   0m05.3s/1m30s  054102/100000 shared iters
+
+running (0m08.0s), 1213/1220 VUs, 65338 complete and 0 interrupted iterations
+bot      [  64% ] 13/20 VUs  06.4s/10s      100.00 iters/s
+buyers   [  65% ] 1200 VUs   0m06.4s/1m30s  064710/100000 shared iters
+
+running (0m08.9s), 1206/1220 VUs, 79257 complete and 0 interrupted iterations
+bot      [  73% ] 06/20 VUs  07.3s/10s      100.00 iters/s
+buyers   [  79% ] 1200 VUs   0m07.3s/1m30s  078531/100000 shared iters
+
+running (0m09.9s), 1202/1220 VUs, 94416 complete and 0 interrupted iterations
+bot      [  83% ] 02/20 VUs  08.3s/10s      100.00 iters/s
+buyers   [  94% ] 1200 VUs   0m08.3s/1m30s  093586/100000 shared iters
+
+running (0m10.9s), 0000/1220 VUs, 100932 complete and 0 interrupted iterations
+bot      [  93% ] 00/20 VUs  09.3s/10s      100.00 iters/s
+buyers ✓ [ 100% ] 1200 VUs   0m08.8s/1m30s  100000/100000 shared iters
+
+running (0m11.9s), 0000/1220 VUs, 100998 complete and 0 interrupted iterations
+bot    ✓ [ 100% ] 00/20 VUs  10s            100.00 iters/s
+buyers ✓ [ 100% ] 1200 VUs   0m08.8s/1m30s  100000/100000 shared iters
+time="2026-10-27T16:29:24Z" level=info msg="FINAL confirmedOrders=500 dbStock=0 redisStock=0 queue={\"consumers\":2,\"deadLetters\":0,\"depth\":0} codes={\"202\":\"505\",\"409\":\"99520\"} instances={\"c5684b32655f\":\"25007\",\"f0a98d59104d\":\"25005\",\"41ae5aa12a8e\":\"25006\",\"7458e05233ce\":\"25007\"} workers={\"de6868d61534\":\"248\",\"e7ce20a94c39\":\"252\"}" source=console
+
+     █ teardown
+
+       ✓ exactly 500 confirmed orders
+       ✓ database stock is 0
+       ✓ redis stock is 0
+       ✓ queue drained, nothing dead-lettered
+
+   ✓ bot_requests_blocked...........: 97.49%  973 out of 998
+     checkout_accepted_202..........: 499     39.723123/s
+   ✓ checkout_answered..............: 100.00% 100000 out of 100000
+   ✓ checkout_no_response...........: 0       0/s
+   ✓ checkout_server_errors_5xx.....: 0       0/s
+     checkout_sold_out_409..........: 99501   7920.822476/s
+     checks.........................: 100.00% 4 out of 4
+     ✓ { phase:final }..............: 100.00% 4 out of 4
+     data_received..................: 24 MB   1.9 MB/s
+     data_sent......................: 32 MB   2.5 MB/s
+     dropped_iterations.............: 3       0.238816/s
+     http_req_blocked...............: avg=499.62µs min=859ns      med=3.19µs  max=171.22ms p(90)=5.14µs   p(95)=6.87µs  
+     http_req_connecting............: avg=468.83µs min=0s         med=0s      max=138.85ms p(90)=0s       p(95)=0s      
+     http_req_duration..............: avg=73.67ms  min=160.95µs   med=55.36ms max=1.02s    p(90)=144.41ms p(95)=191.06ms
+       { expected_response:true }...: avg=73.67ms  min=160.95µs   med=55.36ms max=1.02s    p(90)=144.41ms p(95)=191.06ms
+     ✓ { scenario:buyers }..........: avg=73.99ms  min=254.59µs   med=55.59ms max=1.02s    p(90)=144.86ms p(95)=191.63ms
+     http_req_failed................: 0.00%   0 out of 101001
+     http_req_receiving.............: avg=1.53ms   min=-3030731ns med=18.36µs max=275.68ms p(90)=161.07µs p(95)=3.94ms  
+     http_req_sending...............: avg=613.48µs min=4.08µs     med=10.8µs  max=190.75ms p(90)=36.67µs  p(95)=146.29µs
+     http_req_tls_handshaking.......: avg=0s       min=0s         med=0s      max=0s       p(90)=0s       p(95)=0s      
+     http_req_waiting...............: avg=71.52ms  min=135.4µs    med=54.26ms max=1s       p(90)=139.82ms p(95)=179.83ms
+     http_reqs......................: 101001  8040.23066/s
+     iteration_duration.............: avg=99.31ms  min=298.79µs   med=79.29ms max=1.14s    p(90)=189.37ms p(95)=234.65ms
+     iterations.....................: 100998  8039.991844/s
+     vus............................: 0       min=0                max=1214
+     vus_max........................: 1220    min=1220             max=1220
+
+
+running (0m12.6s), 0000/1220 VUs, 100998 complete and 0 interrupted iterations
+bot    ✓ [ 100% ] 00/20 VUs  10s            100.00 iters/s
+buyers ✓ [ 100% ] 1200 VUs   0m08.8s/1m30s  100000/100000 shared iters

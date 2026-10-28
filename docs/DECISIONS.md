@@ -77,7 +77,7 @@ A determined bot farm with many IPs and real browsers gets past simple rules. In
 
 ## 8. Stateless API, replicated
 
-The API keeps nothing that matters in memory. The cached sale view and the "sold out" flag are refreshed from Redis every 500 ms, and losing them just means a Redis read. Docker Compose runs 4 API replicas and 2 workers, and NGINX round-robins across them (the k6 run shows 25,005 to 25,007 requests per replica). If an API loses its RabbitMQ connection it exits and is restarted rather than limping on.
+The API keeps nothing that matters in memory. The cached sale view and the "sold out" flag are refreshed from Redis every 500 ms, and losing them just means a Redis read. Docker Compose runs 4 API replicas and 2 workers, and NGINX round-robins across them (the k6 run shows 25,003 to 25,009 requests per replica). If an API loses its RabbitMQ connection it exits and is restarted rather than limping on.
 
 Node's event loop is kept free: no synchronous I/O, no CPU-heavy work in the request path (one HMAC and one Redis call), and Redis commands are auto-pipelined by ioredis.
 
