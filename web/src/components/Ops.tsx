@@ -12,7 +12,7 @@ interface Stats {
   series: { t: number; codes: Record<string, string> }[];
 }
 
-const CODE_COLORS: Record<string, string> = { '202': 'var(--green)', '200': 'var(--green)', '409': 'var(--grey)', '425': 'var(--amber)' };
+const CODE_COLORS: Record<string, string> = { '202': 'var(--ok)', '200': 'var(--ok)', '409': 'var(--grey)', '425': 'var(--amber)' };
 
 function Tile({ label, value, tone }: { label: string; value: string | number; tone?: 'ok' | 'bad' }) {
   return (
@@ -51,14 +51,14 @@ function RpsChart({ series }: { series: Stats['series'] }) {
           return Object.entries(p.codes).sort().map(([code, n]) => {
             const h = (Number(n) / max) * 116;
             y -= h;
-            return <rect key={`${i}-${code}`} x={i * 10 + 1} y={y} width={8} height={h} fill={CODE_COLORS[code] ?? 'var(--red)'} />;
+            return <rect key={`${i}-${code}`} x={i * 10 + 1} y={y} width={8} height={h} fill={CODE_COLORS[code] ?? 'var(--err)'} />;
           });
         })}
       </svg>
       <p className="muted small legend">
-        <span className="sw" style={{ background: 'var(--green)' }} /> accepted
+        <span className="sw" style={{ background: 'var(--ok)' }} /> accepted
         <span className="sw" style={{ background: 'var(--grey)' }} /> sold out / duplicate
-        <span className="sw" style={{ background: 'var(--red)' }} /> errors
+        <span className="sw" style={{ background: 'var(--err)' }} /> errors
       </p>
     </div>
   );

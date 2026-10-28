@@ -42,7 +42,7 @@ function saleView(now = Date.now()) {
   const state = now < sale.startsAt ? 'upcoming' : remaining > 0 ? 'live' : 'sold_out';
   return {
     saleId: sale.saleId,
-    product: { id: sale.productId, name: 'Nova X1', priceInr: 49999 },
+    product: { id: sale.productId, name: 'Shak-V1', priceInr: 49999 },
     startsAt: sale.startsAt,
     serverTime: now,
     totalStock: sale.totalStock,

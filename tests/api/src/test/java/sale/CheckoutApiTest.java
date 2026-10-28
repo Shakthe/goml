@@ -22,7 +22,7 @@ class CheckoutApiTest extends ApiSupport {
         .body("state", equalTo("upcoming"))
         .body("totalStock", equalTo(500))
         .body("remaining", equalTo(500))
-        .body("product.name", equalTo("Nova X1"))
+        .body("product.name", equalTo("Shak-V1"))
         .body("serverTime", greaterThan(0L))
         .body("startsAt", greaterThan(0L));
   }

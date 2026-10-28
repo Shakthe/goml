@@ -28,5 +28,5 @@ CREATE TABLE orders (
 
 CREATE INDEX orders_sale_status_idx ON orders (sale_id, status);
 
-INSERT INTO products (id, name, price_inr) VALUES ('nova-x1', 'Nova X1', 49999);
+INSERT INTO products (id, name, price_inr) VALUES ('nova-x1', 'Shak-V1', 49999);
 INSERT INTO inventory (product_id, stock) VALUES ('nova-x1', 500);

@@ -104,7 +104,7 @@ export function Storefront() {
   return (
     <section className="store">
       <div className="product-media">
-        <img src="/phone.svg" alt="Nova X1 phone" width={240} height={440} fetchPriority="high" />
+        <img src="/phone.webp" alt="Shak-V1 phone" width={240} height={380} fetchPriority="high" />
       </div>
 
       <div className="product-info">
