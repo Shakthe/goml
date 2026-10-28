@@ -101,63 +101,94 @@ export function Storefront() {
     }
   };
 
+  const saleDate = startsAt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+
   return (
-    <section className="store">
-      <div className="product-media">
-        <img src="/phone.webp" alt="Shak-V1 phone" width={240} height={380} fetchPriority="high" />
-      </div>
-
-      <div className="product-info">
-        <p className="eyebrow">
-          Festival flash sale · {startsAt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })},{' '}
-          {opensAt}
-        </p>
-        <h1>{sale.product.name}</h1>
-        <p className="lead">256 GB · 6.7" display · 5G. {sale.totalStock} units at {price}.</p>
-
-        {now < sale.startsAt ? (
-          <>
-            <p className="label">Sale starts in</p>
-            <Countdown ms={sale.startsAt - now} />
-          </>
-        ) : (
-          <div className="stock">
-            <div className="stock-row">
-              <span className="label">{soldOut ? 'Sold out' : 'Units left'}</span>
-              <span className="stock-count">
-                <b>{sale.remaining}</b> / {sale.totalStock}
-              </span>
-            </div>
-            <div className="bar" aria-hidden>
-              <div className="bar-fill" style={{ width: `${pct}%` }} />
-            </div>
-            <p className="muted small">{sold} sold</p>
-          </div>
-        )}
-
-        <button
-          className={`buy ${c.phase === 'confirmed' ? 'done' : ''}`}
-          onClick={onBuy}
-          disabled={disabled}
-          aria-busy={c.phase === 'submitting' || c.phase === 'queued'}
-        >
-          {soldOut && c.phase === 'idle' ? 'Sold out' : buttonLabel(c, live, price, opensAt)}
-        </button>
-
-        <div aria-live="polite">
-          <StatusLine c={c} />
+    <>
+      <nav className="crumbs" aria-label="Breadcrumb">
+        <span>Electronics</span><span>Mobiles</span><span>{sale.product.name}</span>
+      </nav>
+      <section className="store">
+        <div className="product-media">
+          <img src="/phone.webp" alt="Shak-V1 phone, back view" width={360} height={640} fetchPriority="high" />
         </div>
 
-        <ul className="facts">
-          <li>One unit per customer</li>
-          <li>Free delivery in 3–5 days</li>
-          <li>7-day replacement</li>
-        </ul>
+        <div className="product-info">
+          <h1>{sale.product.name} (256 GB, 6.7" display, 5G)</h1>
+          <p className="brand-line"><a href="/">Visit the flash store</a></p>
+          <hr className="rule" />
+          <span className="deal">Festival flash sale</span>
+          <p className="price">{price}</p>
+          <p className="tax">Inclusive of all taxes. {sale.totalStock} units only, {saleDate} at {opensAt}.</p>
+          <hr className="rule" />
 
-        <p className="feed muted small">
-          <span className={`dot ${feed === 'live' ? 'on' : ''}`} /> {feed === 'live' ? 'Live updates' : feed === 'polling' ? 'Updating every few seconds' : 'Connecting…'}
-        </p>
-      </div>
-    </section>
+          {now < sale.startsAt && (
+            <>
+              <p className="label">Sale starts in</p>
+              <Countdown ms={sale.startsAt - now} />
+              <hr className="rule" />
+            </>
+          )}
+
+          <div className="about">
+            <h2>About this item</h2>
+            <ul>
+              <li>256 GB storage with a 6.7-inch display and 5G.</li>
+              <li>Modular metal back with replaceable panels, held by screws you can open yourself.</li>
+              <li>Limited flash sale: one unit per customer, while stock lasts.</li>
+              <li>Free delivery in 3 to 5 days and 7-day replacement.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="buybox-col">
+          <div className="buybox">
+            <p className="price">{price}</p>
+            <p className="delivery">FREE delivery in <b>3–5 days</b></p>
+
+            {now < sale.startsAt ? (
+              <p className="in-stock">Available from {opensAt}</p>
+            ) : (
+              <div className="stock">
+                <div className="stock-row">
+                  <span className={soldOut ? 'out-stock' : 'in-stock'}>{soldOut ? 'Sold out' : 'In stock'}</span>
+                  <span className="stock-count">
+                    <b>{sale.remaining}</b> / {sale.totalStock}
+                  </span>
+                </div>
+                <div className="bar" aria-hidden>
+                  <div className="bar-fill" style={{ width: `${pct}%` }} />
+                </div>
+                <p className="label">{soldOut ? 'Sold out' : 'Units left'} · {sold} sold</p>
+              </div>
+            )}
+
+            <button
+              className={`buy ${c.phase === 'confirmed' ? 'done' : ''}`}
+              onClick={onBuy}
+              disabled={disabled}
+              aria-busy={c.phase === 'submitting' || c.phase === 'queued'}
+            >
+              {soldOut && c.phase === 'idle' ? 'Sold out' : buttonLabel(c, live, price, opensAt)}
+            </button>
+
+            <div aria-live="polite">
+              <StatusLine c={c} />
+            </div>
+
+            <ul className="facts">
+              <li><span>Ships from</span><span>flash</span></li>
+              <li><span>Sold by</span><span>flash</span></li>
+              <li><span>Limit</span><span>One per customer</span></li>
+              <li><span>Returns</span><span>7-day replacement</span></li>
+            </ul>
+
+            <p className="feed muted small">
+              <span className={`dot ${feed === 'live' ? 'on' : ''}`} /> {feed === 'live' ? 'Live updates' : feed === 'polling' ? 'Updating every few seconds' : 'Connecting…'}
+            </p>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

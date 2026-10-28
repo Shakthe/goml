@@ -132,7 +132,7 @@ Redis keys for one sale, all tagged with `{saleId}` so they land on the same Clu
 
 ## Frontend
 
-- **Size**: the app is written against the React API and built with Preact's compatibility layer. 45 KB of JS and CSS (17.5 KB gzipped). `npm run build` fails above 200 KB ([`web/scripts/check-bundle.mjs`](../web/scripts/check-bundle.mjs)). The ops page is a separate chunk that shoppers never download.
+- **Size**: the app is written against the React API and built with Preact's compatibility layer. 47.5 KB of JS and CSS (18 KB gzipped). `npm run build` fails above 200 KB ([`web/scripts/check-bundle.mjs`](../web/scripts/check-bundle.mjs)). The ops page is a separate chunk that shoppers never download.
 - **Clock**: the countdown uses the server's time (an offset measured at load), so a customer with a wrong phone clock still sees the right countdown.
 - **Live updates**: one Server-Sent Events stream per browser. Each API replica reads Redis once every 500 ms and pushes to all its connected browsers only when something changed. If the stream fails three times in a row, the page switches to polling every 2 to 3 seconds.
 - **Buy button**: a small state machine ([`web/src/checkout-machine.ts`](../web/src/checkout-machine.ts)). The first click moves it to `submitting`, and any further click is ignored. A ref also blocks clicks that land in the same frame, before React re-renders.

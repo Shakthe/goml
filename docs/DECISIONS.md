@@ -70,9 +70,9 @@ A determined bot farm with many IPs and real browsers gets past simple rules. In
 
 ## 7. Frontend: React API on Preact, Zustand, no UI library
 
-- The brief sets a 200 KB bundle budget. With React DOM the minified app was 240 KB raw (76 KB gzipped): under budget gzipped, over budget raw. Building the same code with `preact/compat` brings it to 45 KB raw (17.5 KB gzipped), which meets the budget under either reading. The code is ordinary React with hooks.
+- The brief sets a 200 KB bundle budget. With React DOM the minified app was 240 KB raw (76 KB gzipped): under budget gzipped, over budget raw. Building the same code with `preact/compat` brings it to 47.5 KB raw (18 KB gzipped), which meets the budget under either reading. The code is ordinary React with hooks.
 - Zustand (about 1 KB) holds the sale, server clock offset, feed state and checkout state.
-- No CSS framework: about 6 KB of hand-written CSS for the black, sharp-edged look.
+- No CSS framework: about 7 KB of hand-written CSS for a plain, white product page laid out like a large online store (image, details, buy box).
 - Lighthouse on its throttled mobile profile: Time to Interactive 1.4 s, performance score 100.
 
 ## 8. Stateless API, replicated

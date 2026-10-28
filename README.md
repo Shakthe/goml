@@ -46,7 +46,7 @@ The first version of this test kept 1,200 requests in flight. It pushed the same
 | Optimistic (version column, 3 retries) | 167 | 261 ms | 413 ms | Never oversells, but **undersold**: 4,833 buyers were turned away while stock was left |
 | **Redis Lua + RabbitMQ + worker (this design)** | **500** | **19 ms** | **74 ms** | Correct and about 14x faster at the median |
 
-**Frontend**: 45 KB of JS and CSS (17.5 KB gzipped) against a 200 KB budget that the build enforces. Lighthouse Time to Interactive is 1.4 s on its throttled mobile profile and 0.4 s on desktop, with a performance score of 100 ([`evidence/lighthouse/`](evidence/lighthouse/)).
+**Frontend**: 47.5 KB of JS and CSS (18 KB gzipped) against a 200 KB budget that the build enforces. Lighthouse Time to Interactive is 1.4 s on its throttled mobile profile and 0.3 s on desktop, with a performance score of 100 ([`evidence/lighthouse/`](evidence/lighthouse/)).
 
 ## How it works
 

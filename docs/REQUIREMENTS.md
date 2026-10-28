@@ -16,8 +16,8 @@ Every requirement in the case study, where it is implemented, and the evidence t
 |---|---|---|---|
 | Frontend | Stop repeated API calls from rapid clicks | [`checkout-machine.ts`](../web/src/checkout-machine.ts), ref lock in [`Storefront.tsx`](../web/src/components/Storefront.tsx), `Idempotency-Key` | Playwright: 5 clicks → 1 request. Vitest state-machine tests. REST Assured `idempotentRetry` |
 | Frontend | Loading and failure states without freezing | Status line per state, retry keeps the same key, SSE → polling fallback | Screenshots `03` to `06` |
-| Frontend | Bundle < 200 KB | Preact compat, code-split ops page, [`check-bundle.mjs`](../web/scripts/check-bundle.mjs) fails the build over budget | 45 KB raw / 17.5 KB gzip |
-| Frontend | Time to Interactive < 1.5 s | Small bundle, preloaded image, no blocking work | Lighthouse mobile (throttled): 1.4 s, desktop 0.4 s ([`evidence/lighthouse/`](../evidence/lighthouse/)) |
+| Frontend | Bundle < 200 KB | Preact compat, code-split ops page, [`check-bundle.mjs`](../web/scripts/check-bundle.mjs) fails the build over budget | 47.5 KB raw / 18 KB gzip |
+| Frontend | Time to Interactive < 1.5 s | Small bundle, preloaded image, no blocking work | Lighthouse mobile (throttled): 1.4 s, desktop 0.3 s ([`evidence/lighthouse/`](../evidence/lighthouse/)) |
 | Gateway | Take massive parallel traffic without drops | NGINX with upstream keepalive, 16k connections per worker, fast in-memory sold-out path | 100,000 / 100,000 answered |
 | Gateway | Block bot traffic, rate-limit bad actors | [`nginx.conf`](../infra/nginx/nginx.conf): per-IP `limit_req` and `limit_conn`, user-agent filter | k6 bot scenario: 97.5% got 429. REST Assured `GatewayTest` |
 | Gateway | Distribute load across replicas | `upstream api_pool` over 4 API replicas | 25,004 to 25,010 requests per replica. REST Assured `loadBalanced` |
@@ -60,4 +60,4 @@ Every requirement in the case study, where it is implemented, and the evidence t
 |---|---|
 | Identifies the N+1 and row-lock bottleneck | [ARCHITECTURE.md § The problem](ARCHITECTURE.md#the-problem-with-the-old-design), measured in the lab |
 | Asynchronous queueing combined with atomic Redis tokens | The production `queue` strategy |
-| UI bundle optimisation and edge CDN | 17.5 KB gzipped, budget enforced in the build, immutable caching |
+| UI bundle optimisation and edge CDN | 18 KB gzipped, budget enforced in the build, immutable caching |

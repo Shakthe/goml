@@ -89,7 +89,7 @@ The first version kept 1,200 requests in flight ([`flash-sale-run-1200vus.txt`](
 
 Every run had exactly 500 orders, 100% answered and 0 errors.
 
-A run with 1,200 in flight while a browser screenshotted the ops page is kept in [`flash-sale-run-while-screenshotting.txt`](../evidence/k6/flash-sale-run-while-screenshotting.txt): 100,000 requests in 14.1 s, same correctness results.
+The ops-page screenshots were taken during a separate run, with Chrome capturing the page at the same time ([`flash-sale-run-while-screenshotting.txt`](../evidence/k6/flash-sale-run-while-screenshotting.txt)): 100,000 requests in 10.8 s, exactly 500 orders, stock 0 in Redis and Postgres. With the browser also using CPU, its p99.9 was 102 ms, so that run missed the 100 ms threshold by 2 ms.
 
 **About the numbers.** Everything ran on one 8-core laptop, with k6 competing for CPU with NGINX, the API replicas and the databases. The first attempt used a fixed arrival rate of 10,000 requests per second. k6 itself could not generate that rate on this machine and reported dropped iterations on its side, while the server still answered every request it received. So the test was changed to send exactly 100,000 requests as fast as possible, which reached about 11,000 per second. Real capacity numbers would need the load generator on separate machines.
 
@@ -153,8 +153,8 @@ npx lighthouse http://localhost:8080/ --only-categories=performance
 
 | Profile | Score | FCP | LCP | Time to Interactive | TBT | Transferred |
 |---|---|---|---|---|---|---|
-| Mobile (Lighthouse default throttling) | 100 | 0.9 s | 1.4 s | **1.4 s** | 0 ms | 19 KiB |
-| Desktop | 100 | 0.3 s | 0.4 s | **0.4 s** | 0 ms | 19 KiB |
+| Mobile (Lighthouse default throttling) | 100 | 1.1 s | 1.4 s | **1.4 s** (1,433 ms) | 0 ms | 42 KiB |
+| Desktop | 100 | 0.3 s | 0.3 s | **0.3 s** | 0 ms | 42 KiB |
 
 Reports: [`evidence/lighthouse/`](../evidence/lighthouse/).
 

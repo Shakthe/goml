@@ -2,17 +2,17 @@
 > flash-sale-web@0.0.0 build
 > tsc -b && vite build && node scripts/check-bundle.mjs
 
-vite v6.4.5 building for production...
+[36mvite v6.4.5 [32mbuilding for production...[36m[39m
 transforming...
-✓ 20 modules transformed.
+[32m✓[39m 20 modules transformed.
 rendering chunks...
 computing gzip size...
-dist/index.html                  0.90 kB │ gzip:  0.53 kB
-dist/assets/index-DyzFaKnw.css   6.03 kB │ gzip:  1.93 kB
-dist/assets/Ops-DwSs6OKm.js      4.58 kB │ gzip:  1.93 kB
-dist/assets/index-BAs5BpWp.js   35.81 kB │ gzip: 14.02 kB
-✓ built in 252ms
-index-BAs5BpWp.js                           35.0 KB    13.7 KB gz
-index-DyzFaKnw.css                           5.9 KB     1.9 KB gz
-Ops-DwSs6OKm.js                              4.5 KB     1.9 KB gz
-total: 45.3 KB raw, 17.5 KB gzipped (budget 200 KB raw)
+[2mdist/[22m[32mindex.html                 [39m[1m[2m 0.90 kB[22m[1m[22m[2m │ gzip:  0.53 kB[22m
+[2mdist/[22m[35massets/index-6ypcXpFH.css  [39m[1m[2m 6.88 kB[22m[1m[22m[2m │ gzip:  2.12 kB[22m
+[2mdist/[22m[36massets/Ops-BYtGjagg.js     [39m[1m[2m 4.57 kB[22m[1m[22m[2m │ gzip:  1.93 kB[22m
+[2mdist/[22m[36massets/index-DgEHKYwG.js   [39m[1m[2m37.22 kB[22m[1m[22m[2m │ gzip: 14.39 kB[22m
+[32m✓ built in 225ms[39m
+index-6ypcXpFH.css                           6.7 KB     2.1 KB gz
+index-DgEHKYwG.js                           36.3 KB    14.1 KB gz
+Ops-BYtGjagg.js                              4.5 KB     1.9 KB gz
+total: 47.5 KB raw, 18.0 KB gzipped (budget 200 KB raw)
