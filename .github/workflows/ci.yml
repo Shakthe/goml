@@ -33,6 +33,8 @@ jobs:
         run: docker compose --profile test run --rm api-tests
       - name: k6 burst (smaller, for CI runners)
         run: docker compose --profile test run --rm -e TOTAL=20000 k6 run /scripts/flash-sale.js
+      - name: Order pipeline survives a RabbitMQ restart
+        run: bash tests/resilience/rabbitmq-restart.sh
       - name: Logs on failure
         if: failure()
         run: docker compose logs --tail 200 api worker gateway

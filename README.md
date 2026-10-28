@@ -20,15 +20,22 @@ All numbers below were measured on one laptop (8 cores, Docker Desktop on Window
 
 | | Result |
 |---|---|
-| Checkout requests sent | 100,000 in 9.0 s (about 11,000 per second) |
+Three runs back to back; each had the result below.
+
+| | Result |
+|---|---|
+| Checkout requests sent | 100,000 in 7.1 to 7.7 s (about 13,000 to 14,000 per second) |
 | Requests answered | 100,000 (100%). No timeouts, no connection errors, no 5xx |
 | Orders confirmed in Postgres | **exactly 500** |
 | Stock left in Redis / Postgres | 0 / 0 |
-| Latency | median 5.7 ms, p95 24.9 ms, p99 47.5 ms, p99.9 87.0 ms (slowest single request 308 ms) |
-| Load per API replica | 25,003 to 25,009 requests each (4 replicas) |
-| Bot requests rate limited | 97.5% (the rest is the allowed burst of 5 plus 2 per second) |
+| Latency (lowest to highest of the three runs) | median 4.7 to 5.3 ms, p95 17.8 to 19.8 ms, p99 29.9 to 32.4 ms, **p99.9 49.6 to 65.2 ms** |
+| Slowest single request | 132 to 828 ms (see below) |
+| Load per API replica | 25,004 to 25,010 requests each (4 replicas) |
+| Bot requests rate limited | 97.4 to 97.5% (the rest is the allowed burst of 5 plus 2 per second) |
 
-The first version of this test kept 1,200 requests in flight. It pushed the same ~11,000 requests per second through, but requests queued behind each other on the shared CPU, so the median was 55 ms and p95 191 ms. Fewer requests in flight gives the same throughput with far lower latency. Both runs are kept in [`evidence/k6/`](evidence/k6/).
+99.9% of requests finish in under 66 ms. The slowest single request is not under control on this machine: it ranged from 132 ms to 828 ms between runs. Diagnostics showed these are moments when the operating system pauses a process while k6, NGINX, four Node processes, Redis, RabbitMQ and Postgres share 8 cores; the request itself takes about 5 ms and garbage collection pauses stayed under 10 ms. The 828 ms run came right after an API replica had restarted. Details are in [docs/TESTING.md](docs/TESTING.md#the-slowest-request).
+
+The first version of this test kept 1,200 requests in flight. It pushed the same requests through, but they queued behind each other on the shared CPU, so the median was 55 ms and p95 191 ms. All runs are kept in [`evidence/k6/`](evidence/k6/).
 
 **Oversell Lab** (same burst against four checkout strategies: 5,000 buyers, 500 units, [`evidence/k6/lab-results.md`](evidence/k6/lab-results.md)):
 

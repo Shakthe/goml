@@ -1,0 +1,9 @@
+1. start a sale with 5 units
+2. restart RabbitMQ
+ Container flash-sale-rabbitmq-1 Restarting 
+ Container flash-sale-rabbitmq-1 Started 
+3. wait for both workers to consume again
+   consumers: 2
+4. wait for the API replicas to be healthy again
+5. place an order and wait for CONFIRMED
+PASS: pipeline recovered after a RabbitMQ restart (order CONFIRMED)

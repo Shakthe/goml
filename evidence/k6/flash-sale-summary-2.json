@@ -1,0 +1,234 @@
+{
+    "metrics": {
+        "iterations": {
+            "count": 101001,
+            "rate": 8040.876170457138
+        },
+        "http_req_duration{expected_response:true}": {
+            "p(90)": 13.4662835,
+            "p(95)": 17.785088899999984,
+            "p(99)": 29.89044691000001,
+            "p(99.9)": 49.67351323200085,
+            "avg": 6.520112442675573,
+            "min": 0.115368,
+            "med": 4.884993,
+            "max": 133.845678
+        },
+        "http_req_waiting": {
+            "p(99.9)": 42.19132899000021,
+            "avg": 6.345825885212463,
+            "min": 0.092084,
+            "med": 4.777746499999999,
+            "max": 83.382412,
+            "p(90)": 13.215627899999998,
+            "p(95)": 17.48650024999999,
+            "p(99)": 28.862486410000006
+        },
+        "checkout_accepted_202": {
+            "count": 499,
+            "rate": 39.72631171036041
+        },
+        "http_req_duration": {
+            "max": 133.845678,
+            "p(90)": 13.4662835,
+            "p(95)": 17.785088899999984,
+            "p(99)": 29.89044691000001,
+            "p(99.9)": 49.67351323200085,
+            "avg": 6.520112442675573,
+            "min": 0.115368,
+            "med": 4.884993
+        },
+        "http_req_connecting": {
+            "max": 37.961777,
+            "p(90)": 0,
+            "p(95)": 0,
+            "p(99)": 0,
+            "p(99.9)": 0.15877034300007417,
+            "avg": 0.003600555383945191,
+            "min": 0,
+            "med": 0
+        },
+        "vus_max": {
+            "value": 120,
+            "min": 120,
+            "max": 120
+        },
+        "checkout_no_response": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count==0": false
+            }
+        },
+        "http_req_tls_handshaking": {
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "p(99)": 0,
+            "p(99.9)": 0,
+            "avg": 0,
+            "min": 0
+        },
+        "data_sent": {
+            "count": 31550798,
+            "rate": 2511817.306730693
+        },
+        "checks": {
+            "fails": 0,
+            "passes": 4,
+            "value": 1
+        },
+        "bot_requests_blocked": {
+            "passes": 975,
+            "fails": 26,
+            "thresholds": {
+                "rate>0.9": false
+            },
+            "value": 0.974025974025974
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 101004,
+            "value": 0
+        },
+        "http_req_duration{scenario:buyers}": {
+            "p(95)": 17.79587859999999,
+            "p(99)": 29.92527770999995,
+            "p(99.9)": 49.625450256000185,
+            "avg": 6.546174259780017,
+            "min": 0.198232,
+            "med": 4.9118735000000004,
+            "max": 133.845678,
+            "p(90)": 13.487207400000003,
+            "thresholds": {
+                "p(95)<100": false,
+                "p(99.9)<100": false
+            }
+        },
+        "data_received": {
+            "count": 23998744,
+            "rate": 1910584.338278841
+        },
+        "checkout_answered": {
+            "passes": 100000,
+            "fails": 0,
+            "thresholds": {
+                "rate==1": false
+            },
+            "value": 1
+        },
+        "checkout_sold_out_409": {
+            "count": 99501,
+            "rate": 7921.458399784712
+        },
+        "vus": {
+            "min": 0,
+            "max": 102,
+            "value": 0
+        },
+        "checks{phase:final}": {
+            "passes": 4,
+            "fails": 0,
+            "thresholds": {
+                "rate==1": false
+            },
+            "value": 1
+        },
+        "http_reqs": {
+            "count": 101004,
+            "rate": 8041.115005998483
+        },
+        "http_req_sending": {
+            "p(95)": 0.025717849999999817,
+            "p(99)": 0.2543738500000001,
+            "p(99.9)": 12.928192594000066,
+            "avg": 0.05218103709754132,
+            "min": 0.003606,
+            "med": 0.009465,
+            "max": 66.201214,
+            "p(90)": 0.015296
+        },
+        "http_req_blocked": {
+            "p(95)": 0.004772,
+            "p(99)": 0.011532040000000037,
+            "p(99.9)": 1.0742483840003318,
+            "avg": 0.011287069076472261,
+            "min": 0.000824,
+            "med": 0.002368,
+            "max": 44.32561,
+            "p(90)": 0.003841
+        },
+        "http_req_receiving": {
+            "p(90)": 0.03181109999999999,
+            "p(95)": 0.10982059999999987,
+            "p(99)": 2.301683120000007,
+            "p(99.9)": 18.077716201000317,
+            "avg": 0.12210552036553007,
+            "min": 0.006825,
+            "med": 0.017708,
+            "max": 71.699083
+        },
+        "checkout_server_errors_5xx": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count==0": false
+            }
+        },
+        "iteration_duration": {
+            "p(99)": 31.858554,
+            "p(99.9)": 55.35011000000085,
+            "avg": 6.975862722745205,
+            "min": 0.270943,
+            "med": 5.203274,
+            "max": 134.000659,
+            "p(90)": 14.375348,
+            "p(95)": 19.12493
+        }
+    },
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+            "teardown": {
+                "checks": {
+                    "exactly 500 confirmed orders": {
+                        "passes": 1,
+                        "fails": 0,
+                        "name": "exactly 500 confirmed orders",
+                        "path": "::teardown::exactly 500 confirmed orders",
+                        "id": "e2d1f08712fd9669944ba6e3ef645f61"
+                    },
+                    "database stock is 0": {
+                        "name": "database stock is 0",
+                        "path": "::teardown::database stock is 0",
+                        "id": "cbc43236137c05991e8bee41c2fb4b77",
+                        "passes": 1,
+                        "fails": 0
+                    },
+                    "redis stock is 0": {
+                        "name": "redis stock is 0",
+                        "path": "::teardown::redis stock is 0",
+                        "id": "49e966e2f3baa605f00fc0fbf64f18d4",
+                        "passes": 1,
+                        "fails": 0
+                    },
+                    "queue drained, nothing dead-lettered": {
+                        "name": "queue drained, nothing dead-lettered",
+                        "path": "::teardown::queue drained, nothing dead-lettered",
+                        "id": "6be0eaa15b2f952376c4e865c40e208c",
+                        "passes": 1,
+                        "fails": 0
+                    }
+                },
+                "name": "teardown",
+                "path": "::teardown",
+                "id": "a8a9942382e8ffe2e56ef29e664b8229",
+                "groups": {}
+            }
+        },
+        "checks": {}
+    }
+}

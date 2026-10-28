@@ -36,6 +36,9 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: flash
       RABBITMQ_DEFAULT_PASS: flash
+      # Erlang schedulers normally spin while idle. On a machine shared with the API
+      # and the load generator that spinning took 1-1.6 cores away from them.
+      RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "+sbwt none +sbwtdcpu none +sbwtdio none"
     ports:
       - "15672:15672"   # management UI, handy for watching the queue
     healthcheck:

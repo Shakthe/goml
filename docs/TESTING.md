@@ -37,12 +37,12 @@ docker compose --profile test run --rm k6 run --summary-export=/results/flash-sa
 
 - 100,000 checkout requests with 100 virtual users (requests in flight at a time). Each request is a different customer with a different client IP.
 - At the same time, a bot sends 100 requests per second from one IP for 10 seconds.
-- Thresholds (the run fails if any is missed): every request answered, zero 5xx, zero no-response, buyer p95 < 100 ms, more than 90% of bot requests rate-limited. After the queue drains: exactly 500 orders, stock 0 in Postgres and Redis, nothing dead-lettered.
+- Thresholds (the run fails if any is missed): every request answered, zero 5xx, zero no-response, buyer p95 < 100 ms and p99.9 < 100 ms, more than 90% of bot requests rate-limited. After the queue drains: exactly 500 orders, stock 0 in Postgres and Redis, nothing dead-lettered.
 
-Last run ([`evidence/k6/flash-sale-run.txt`](../evidence/k6/flash-sale-run.txt)):
+Three runs back to back. Run 1 ([`evidence/k6/flash-sale-run.txt`](../evidence/k6/flash-sale-run.txt)):
 
 ```
-buyers ✓ [ 100% ] 100 VUs    0m09.0s/1m30s  100000/100000 shared iters
+buyers ✓ [ 100% ] 100 VUs    0m07.2s/1m30s  100000/100000 shared iters
 FINAL confirmedOrders=500 dbStock=0 redisStock=0 queue={"depth":0,"consumers":2,"deadLetters":0}
   ✓ exactly 500 confirmed orders
   ✓ database stock is 0
@@ -51,13 +51,34 @@ FINAL confirmedOrders=500 dbStock=0 redisStock=0 queue={"depth":0,"consumers":2,
 ✓ checkout_answered.........: 100.00% 100000 out of 100000
 ✓ checkout_server_errors_5xx: 0
 ✓ checkout_no_response......: 0
-✓ bot_requests_blocked......: 97.50%
-✓ { scenario:buyers }.......: med=5.7ms p(90)=17.79ms p(95)=24.86ms p(99)=47.54ms p(99.9)=86.98ms max=308.32ms
+✓ bot_requests_blocked......: 97.40%
+✓ { scenario:buyers }.......: med=4.65ms p(90)=13.63ms p(95)=18.46ms p(99)=32.44ms p(99.9)=65.16ms max=827.61ms
 ```
+
+| Run | Burst | Median | p95 | p99 | p99.9 | Slowest | Files |
+|---|---|---|---|---|---|---|---|
+| 1 | 7.2 s | 4.7 ms | 18.5 ms | 32.4 ms | 65.2 ms | 828 ms | `flash-sale-run.txt`, `flash-sale-summary.json` |
+| 2 | 7.1 s | 4.9 ms | 17.8 ms | 29.9 ms | 49.6 ms | 134 ms | `flash-sale-run-2.txt`, `flash-sale-summary-2.json` |
+| 3 | 7.7 s | 5.3 ms | 19.8 ms | 32.2 ms | 58.5 ms | 132 ms | `flash-sale-run-3.txt`, `flash-sale-summary-3.json` |
+
+All three passed every threshold, with exactly 500 orders and 25,004 to 25,010 requests on each of the 4 API replicas.
+
+### The slowest request
+
+The p99.9 is stable; the single slowest request is not. About 25 diagnostic runs, which logged every request over 50 ms, showed:
+
+- Every slow request was a "sold out" answer served from the API's memory. That path takes about 5 ms and touches neither Redis nor the database.
+- Garbage collection is not the cause: with `--trace-gc` on, the longest pause in any API process during a burst was 10 ms.
+- Slow requests arrive in clusters of 50 to 300 ms, sometimes on one API replica and sometimes on all of them at once. These are moments when the operating system (and Windows under Docker's VM) pauses a process while about 20 busy processes share 8 cores. They are worst in the first second, when the 500 orders are also being written.
+- RabbitMQ's Erlang schedulers were spinning while idle and using 1 to 1.6 cores. They are now told not to (`RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS` in `docker-compose.yml`), which also made the burst faster (about 7.5 s instead of 9 s).
+- Tried and not kept, because they made no clear difference or made it worse: 4 NGINX workers instead of 8, a larger Node young-generation heap, less frequent garbage collection in k6, higher CPU priority for the API, NGINX and Redis, and pinning containers to separate cores.
+- Freshly started API processes are slower until their code is compiled. One unrecorded warm-up run right after the APIs restarted had p99.9 122 ms, which fails the threshold. Run 1 above came right after an API replica rejoined the load balancer, and its 828 ms is most likely the same effect.
+
+Getting the slowest request reliably under 100 ms needs the load generator on a separate machine, as it would be in a real test.
 
 ### Why 100 requests in flight
 
-The first version kept 1,200 requests in flight ([`flash-sale-run-1200vus.txt`](../evidence/k6/flash-sale-run-1200vus.txt)): 100,000 requests in 8.8 s, median 55 ms, p95 191 ms, slowest 1.03 s. The machine can only complete about 11,000 requests per second, so extra requests in flight just wait in line, and latency grows with no gain in throughput. The same burst at different levels:
+The first version kept 1,200 requests in flight ([`flash-sale-run-1200vus.txt`](../evidence/k6/flash-sale-run-1200vus.txt)): 100,000 requests in 8.8 s, median 55 ms, p95 191 ms, slowest 1.03 s. The machine can only complete about 11,000 requests per second, so extra requests in flight just wait in line, and latency grows with no gain in throughput. The same burst at different levels (measured before the RabbitMQ change above):
 
 | Requests in flight | Median | p90 | p95 | Slowest | Summary file |
 |---|---|---|---|---|---|
@@ -66,7 +87,7 @@ The first version kept 1,200 requests in flight ([`flash-sale-run-1200vus.txt`](
 | 200 | 9.4 ms | 28.2 ms | 36.6 ms | 194 ms | `tuning-vus200-summary.json` |
 | 100 | 5.0 ms | 14.7 ms | 19.2 ms | 112 ms | `tuning-vus100-summary.json` |
 
-Every run had exactly 500 orders, 100% answered and 0 errors. The slowest single request varies a lot between runs (112 ms to 308 ms at 100 in flight) because the load generator and the whole stack share one CPU. Reducing NGINX to 4 worker processes was also tried and made no difference, so it was not kept.
+Every run had exactly 500 orders, 100% answered and 0 errors.
 
 A run with 1,200 in flight while a browser screenshotted the ops page is kept in [`flash-sale-run-while-screenshotting.txt`](../evidence/k6/flash-sale-run-while-screenshotting.txt): 100,000 requests in 14.1 s, same correctness results.
 
@@ -86,6 +107,16 @@ The same burst (5,000 buyers, 500 units, 200 concurrent clients) against each st
 | pessimistic | 5000 | 500 | 500 | 0 | 0 | 0 | 259.2 | 468.1 | 1304 | 547 |
 | optimistic | 5000 | 500 | 167 | 0 | 4833 | 0 | 261.4 | 412.7 | 632 | 523 |
 | queue | 5000 | 500 | 500 | 0 | 0 | 0 | 18.8 | 74.3 | 146 | 1174 |
+
+### RabbitMQ restart
+
+```
+bash tests/resilience/rabbitmq-restart.sh
+```
+
+Restarts RabbitMQ under the running stack, then checks that both workers consume again and that a new order still reaches `CONFIRMED`. It found a bug: on a lost connection the worker kept running but consumed nothing, so orders stayed in the queue (`FAIL: checkout.orders has 0 consumers, expected 2`). The worker now exits on a lost connection and Docker restarts it, the same way the API already did. Last run: pass ([`evidence/resilience/rabbitmq-restart-run.txt`](../evidence/resilience/rabbitmq-restart-run.txt)).
+
+Also found while running it, not fixed yet: NGINX resolves the `api` name once at startup. If an API container restarts and comes back on a different IP, NGINX stops sending it traffic until the gateway restarts. No requests fail (the other replicas answer), but the load is spread over fewer replicas. The fix is to let NGINX re-resolve the name (`resolver 127.0.0.11` with `resolve` on the upstream server).
 
 ## 3. Browser tests: Playwright
 

@@ -48,7 +48,7 @@ export const options = {
     checkout_answered: ['rate==1'],
     checkout_server_errors_5xx: ['count==0'],
     checkout_no_response: ['count==0'],
-    'http_req_duration{scenario:buyers}': ['p(95)<100'],
+    'http_req_duration{scenario:buyers}': ['p(95)<100', 'p(99.9)<100'],
     bot_requests_blocked: ['rate>0.9'],
     'checks{phase:final}': ['rate==1'],
   },

@@ -7,7 +7,7 @@ Every requirement in the case study, where it is implemented, and the evidence t
 | Requirement | Where | Evidence |
 |---|---|---|
 | Exactly 500 sold, no overselling | [`server/src/scripts.ts`](../server/src/scripts.ts), [`server/src/worker.ts`](../server/src/worker.ts), [`infra/db/init.sql`](../infra/db/init.sql) | k6: 100,000 requests → exactly 500 orders, stock 0 in Redis and Postgres ([`evidence/k6/flash-sale-run.txt`](../evidence/k6/flash-sale-run.txt)). REST Assured `ConcurrencyTest` |
-| No high latency, row locks or timeouts | Checkout path never touches Postgres | p95 24.9 ms, p99 47.5 ms over 100k requests, 0 timeouts. Lab: queue path p95 74 ms vs 468 ms with row locks |
+| No high latency, row locks or timeouts | Checkout path never touches Postgres | p95 17.8 to 19.8 ms, p99.9 49.6 to 65.2 ms over 100k requests (three runs), 0 timeouts. Lab: queue path p95 74 ms vs 468 ms with row locks |
 | Reproduce the oversell bug | `naive` strategy in [`server/src/db-strategies.ts`](../server/src/db-strategies.ts) | 5,000 orders for 500 units ([`evidence/k6/lab-results.md`](../evidence/k6/lab-results.md)), screenshot [`11-ops-naive-oversold-2s.png`](../evidence/screenshots/11-ops-naive-oversold-2s.png) |
 
 ## Technical core requirements
@@ -20,10 +20,10 @@ Every requirement in the case study, where it is implemented, and the evidence t
 | Frontend | Time to Interactive < 1.5 s | Small bundle, preloaded image, no blocking work | Lighthouse mobile (throttled): 1.4 s, desktop 0.4 s ([`evidence/lighthouse/`](../evidence/lighthouse/)) |
 | Gateway | Take massive parallel traffic without drops | NGINX with upstream keepalive, 16k connections per worker, fast in-memory sold-out path | 100,000 / 100,000 answered |
 | Gateway | Block bot traffic, rate-limit bad actors | [`nginx.conf`](../infra/nginx/nginx.conf): per-IP `limit_req` and `limit_conn`, user-agent filter | k6 bot scenario: 97.5% got 429. REST Assured `GatewayTest` |
-| Gateway | Distribute load across replicas | `upstream api_pool` over 4 API replicas | 25,003 to 25,009 requests per replica. REST Assured `loadBalanced` |
+| Gateway | Distribute load across replicas | `upstream api_pool` over 4 API replicas | 25,004 to 25,010 requests per replica. REST Assured `loadBalanced` |
 | App logic | Decouple DB writes from the request | RabbitMQ `checkout.orders`, workers, `202` + `Location` | REST Assured `acceptedThenConfirmed` |
 | App logic | Stateless clusters | No session or stock state in process; `deploy.replicas` | Any replica serves any request (`X-Served-By` header) |
-| App logic | Event-loop safety | No sync I/O, one HMAC + one Redis call per request, broadcast timer instead of per-client reads | p95 24.9 ms at ~11k requests/s on a laptop |
+| App logic | Event-loop safety | No sync I/O, one HMAC + one Redis call per request, broadcast timer instead of per-client reads | p95 under 20 ms at ~13k requests/s on a laptop |
 | Database | ACID, atomic decrements | Lua `DECR` in Redis. Worker transaction with `UPDATE ... WHERE stock > 0`. `CHECK (stock >= 0)`, unique constraints | Concurrency tests and k6 final checks |
 | Database | No application-level double counters | Redis is the single counter; Postgres is reconciled through the same transaction that writes the order | Redis stock = Postgres stock after every run |
 

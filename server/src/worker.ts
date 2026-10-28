@@ -58,6 +58,17 @@ export async function persistOrder(m: OrderMessage): Promise<Outcome> {
 
 async function main() {
   const { conn, ch } = await connectAmqp(log);
+  // If RabbitMQ goes away, exit so Docker restarts the worker with a fresh connection.
+  // Without this the process stays up but consumes nothing, and orders pile up in the queue.
+  let stopping = false;
+  const lost = (what: string) => () => {
+    if (stopping) return;
+    logError(`RabbitMQ ${what} closed, exiting`, new Error(`${what} closed`));
+    process.exit(1);
+  };
+  conn.on('close', lost('connection'));
+  conn.on('error', (err) => logError('RabbitMQ connection error', err));
+  ch.on('close', lost('channel'));
   await ch.prefetch(config.workerPrefetch);
   log('worker ready', { queue: QUEUE, prefetch: config.workerPrefetch });
 
@@ -100,6 +111,7 @@ async function main() {
   });
 
   const shutdown = async () => {
+    stopping = true;
     log('shutting down');
     await ch.close().catch(() => undefined);
     await conn.close().catch(() => undefined);
